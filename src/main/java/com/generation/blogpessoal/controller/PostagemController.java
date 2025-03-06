@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
+import com.generation.blogpessoal.repository.TemaRepository;
 
 import jakarta.validation.Valid;
 
@@ -34,6 +35,9 @@ public class PostagemController {
 	@Autowired // ela cria a instancia, roda oque precisa e fecha sozinha, quando eu precisar.
 	//
 	private PostagemRepository postagemRepository;
+
+	@Autowired
+	private TemaRepository temaRepository;
 
 //SELECT
 	@GetMapping
@@ -65,38 +69,54 @@ public class PostagemController {
 
 	// INSERT
 //verbo post é usado para fazer o insert no DB
-	@PostMapping
+	
 //post nome da variavel
 	// Valid = checa as validações na model
 	// requestBody =
+	
+	
+	@PostMapping
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+		if (postagemRepository.existsById(postagem.getId())) {
+			
+		
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(postagemRepository.save(postagem));
+		
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não exixte!", null);
 	}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	
 
 	// UPDATE
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-
-		return postagemRepository.findById(postagem.getId())
-
-				// .map mapeia a postagem que foi localizado passando o Id//
-				.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(postagemRepository.save(postagem));
+		
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não exixte!", null);
+		
+		// return postagemRepository.findById(postagem.getId())
+		/// .map mapeia a postagem que foi localizado passando o Id//
+		// .map(resposta ->
+		/// ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
+		// .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
-	
-	
-	//DELETE
+	// DELETE
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
-		
+
 //TRATANDO E PREVININDO ERROS NO RETNORNO DA POSTAGEM QUE FOI PESQUISADA
 		Optional<Postagem> postagem = postagemRepository.findById(id);
 		if (postagem.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
-		
+
 		postagemRepository.deleteById(id);
 
 	}

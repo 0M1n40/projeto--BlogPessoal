@@ -6,10 +6,13 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -34,7 +37,9 @@ public class Postagem {
 	@UpdateTimestamp // NA HR QUE A POSTAGEM FOR CRIADA, A DATA E HR É GRAVADA NA TABELA DO DB AUTOMATICAMENTE
 	private LocalDateTime data;
 	
-	
+	@ManyToOne // significa que a classe postagem sera o lado n1, e tera um obj da classe tema.
+	@JsonIgnoreProperties ("postagem") //
+	private Tema tema;// adicionando o OBJ tema (id e descricao)
 	
 	
 	
@@ -69,6 +74,14 @@ public class Postagem {
 
 	public void setData(LocalDateTime data) {
 		this.data = data;
+	}
+
+	public Tema getTema() {
+		return tema;
+	}
+
+	public void setTema(Tema tema) {
+		this.tema = tema;
 	}
 
 	
