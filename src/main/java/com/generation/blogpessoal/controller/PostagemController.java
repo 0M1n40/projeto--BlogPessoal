@@ -76,6 +76,24 @@ public class PostagemController {
 	
 	
 	@PostMapping
+	
+	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(postagemRepository.save(postagem));
+		
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não exixte!", null);
+		
+		// return postagemRepository.findById(postagem.getId())
+		/// .map mapeia a postagem que foi localizado passando o Id//
+		// .map(resposta ->
+		/// ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
+		// .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+	}
+	
+	// UPDATE
+		@PutMapping
+		
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
 		if (postagemRepository.existsById(postagem.getId())) {
 			
@@ -90,21 +108,7 @@ public class PostagemController {
 		}
 	
 
-	// UPDATE
-	@PutMapping
-	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-		if (temaRepository.existsById(postagem.getTema().getId()))
-			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(postagemRepository.save(postagem));
-		
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não exixte!", null);
-		
-		// return postagemRepository.findById(postagem.getId())
-		/// .map mapeia a postagem que foi localizado passando o Id//
-		// .map(resposta ->
-		/// ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
-		// .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-	}
+	
 
 	// DELETE
 	@ResponseStatus(HttpStatus.NO_CONTENT)

@@ -37,10 +37,14 @@ public class Postagem {
 	@UpdateTimestamp // NA HR QUE A POSTAGEM FOR CRIADA, A DATA E HR É GRAVADA NA TABELA DO DB AUTOMATICAMENTE
 	private LocalDateTime data;
 	
+	
 	@ManyToOne // significa que a classe postagem sera o lado n1, e tera um obj da classe tema.
 	@JsonIgnoreProperties ("postagem") //
 	private Tema tema;// adicionando o OBJ tema (id e descricao)
 	
+	@ManyToOne 
+	@JsonIgnoreProperties ("postagem") 
+	private Usuario usuario;
 	
 	
 
@@ -82,6 +86,14 @@ public class Postagem {
 
 	public void setTema(Tema tema) {
 		this.tema = tema;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	
